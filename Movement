@@ -1,0 +1,499 @@
+-- Saved by UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw
+
+--Decompiled by Oracle https://discord.gg/Y6UhaEjGaG
+local l_script_FirstAncestor_0 = script:FindFirstAncestor("MainUI");
+local l_LocalPlayer_0 = game.Players.LocalPlayer;
+local v2 = require(script.Parent);
+local _ = require(l_script_FirstAncestor_0.Modules.Spring);
+local l_Controls_0 = require(l_LocalPlayer_0:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule")):GetControls();
+local l_GetPlatform_0 = require(game:GetService("ReplicatedStorage"):WaitForChild("ClientModules"):WaitForChild("GetPlatform"));
+local l_Modifiers_0 = require(game:GetService("ReplicatedStorage"):WaitForChild("Modifiers"));
+local v7 = game["Run Service"];
+local l_UserInputService_0 = game:GetService("UserInputService");
+local l_TweenService_0 = game:GetService("TweenService");
+local l_Humanoid_0 = v2.char:WaitForChild("Humanoid");
+local _ = l_Humanoid_0:WaitForChild("Animator");
+local l_Collision_0 = v2.char:WaitForChild("Collision");
+local l_CollisionCrouch_0 = l_Collision_0:WaitForChild("CollisionCrouch");
+local l_HumanoidRootPart_0 = v2.char:WaitForChild("HumanoidRootPart");
+local _ = v2.char:WaitForChild("HumanoidRootPart"):WaitForChild("BodyGyro");
+local l_Waist_0 = v2.char:WaitForChild("UpperTorso"):WaitForChild("Waist");
+local l_Neck_0 = v2.char:WaitForChild("Head"):WaitForChild("Neck");
+local l_Root_0 = v2.char:WaitForChild("LowerTorso"):WaitForChild("Root");
+local l_RightShoulder_0 = v2.char:WaitForChild("RightUpperArm"):WaitForChild("RightShoulder");
+local l_LeftShoulder_0 = v2.char:WaitForChild("LeftUpperArm"):WaitForChild("LeftShoulder");
+local _ = v2.char:WaitForChild("RightUpperArm");
+local _ = v2.char:WaitForChild("LeftUpperArm");
+l_Waist_0 = v2.char:WaitForChild("UpperTorso"):WaitForChild("Waist");
+l_Neck_0 = v2.char:WaitForChild("Head"):WaitForChild("Neck");
+l_Root_0 = v2.char:WaitForChild("LowerTorso"):WaitForChild("Root");
+l_RightShoulder_0 = v2.char:WaitForChild("RightUpperArm"):WaitForChild("RightShoulder");
+l_LeftShoulder_0 = v2.char:WaitForChild("LeftUpperArm"):WaitForChild("LeftShoulder");
+task.wait(0.5);
+local l_C0_0 = l_Waist_0.C0;
+local l_C0_1 = l_Root_0.C0;
+local l_C0_2 = l_Neck_0.C0;
+local l_C0_3 = l_RightShoulder_0.C0;
+local l_C0_4 = l_LeftShoulder_0.C0;
+local v28 = Vector3.new(0, 0, 1, 0);
+local l_Animations_0 = v2.char:WaitForChild("Animations");
+local v30 = Vector3.new(0, 0, 0, 0);
+local v31 = tick();
+local _ = tick();
+local l_ax_0 = v2.ax;
+local l_az_t_0 = v2.az_t;
+local v35 = false;
+local v36 = false;
+local v37 = tick();
+local v38 = false;
+local v39 = Vector3.new(0, 0, 0, 0);
+local v40 = false;
+local l_ReplicaDataModule_0 = require(game:GetService("ReplicatedStorage"):WaitForChild("ReplicaDataModule"));
+local v42 = {
+    Crouch = l_script_FirstAncestor_0.MainFrame:WaitForChild("MobileButtons"):WaitForChild("CrouchButton"), 
+    Jump = l_script_FirstAncestor_0.MainFrame:WaitForChild("MobileButtons"):WaitForChild("JumpButton")
+};
+local v43, v44 = l_GetPlatform_0();
+local v45 = OverlapParams.new();
+v45.CollisionGroup = "Player";
+v45.RespectCanCollide = true;
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false);
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false);
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Seated, false);
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false);
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Jumping, false);
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Climbing, false);
+l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Swimming, false);
+local v46 = false;
+if game:GetService("ReplicatedStorage"):WaitForChild("GameData"):WaitForChild("Floor").Value == "Retro" then
+    l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Jumping, true);
+    l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Climbing, true);
+    v46 = true;
+    l_script_FirstAncestor_0.MainFrame:WaitForChild("MobileButtons"):WaitForChild("CrouchButton").Image = "rbxassetid://719941248";
+end;
+local v47 = {
+    Walk = {}
+};
+for _, v49 in pairs(l_Animations_0:GetChildren()) do
+    v47[v49.Name] = v2.hum:WaitForChild("Animator"):LoadAnimation(v49);
+end;
+v2.animations = v47;
+v2.animations.Forward:Play(0.2, 0.01, 0.75);
+local l_FootstepHandler_0 = require(game.ReplicatedStorage:WaitForChild("ClientModules"):WaitForChild("FootstepHandler"));
+v2.animations.Forward:GetMarkerReachedSignal("Footstep"):Connect(function(_)
+    l_FootstepHandler_0(v2, v2.char);
+end);
+v47.Idle:Play(0.2, 1, 0.75);
+local v52 = 15;
+local v53 = 0;
+updatespeed = function()
+    v53 = v2.char:GetAttribute("SpeedBoost");
+    if v2.char:GetAttribute("SpeedBoostExtra") then
+        v53 = v53 + v2.char:GetAttribute("SpeedBoostExtra");
+    end;
+    v2.fovtarget = 70 + math.clamp(v53 * 2.5, 0, 20);
+    if v2.char:GetAttribute("SpeedBoostBehind") then
+        v53 = v53 + v2.char:GetAttribute("SpeedBoostBehind");
+    end;
+    if v2.char:GetAttribute("SpeedBoostMod") then
+        v53 = v53 + v2.char:GetAttribute("SpeedBoostMod");
+    end;
+    v52 = 15;
+    if v2.crouching == true then
+        v52 = 10;
+        if l_Modifiers_0.isOn("PlayerCrouchSlow") or l_Modifiers_0.isOn("PlayerSlow") then
+            v52 = 5;
+        end;
+        l_Collision_0.CollisionGroup = "PlayerCrouching";
+        l_Collision_0.CanCollide = false;
+    else
+        l_Collision_0.CollisionGroup = "Player";
+        l_Collision_0.CanCollide = true;
+    end;
+    l_CollisionCrouch_0.CanCollide = not l_Collision_0.CanCollide;
+    l_CollisionCrouch_0.CollisionGroup = l_Collision_0.CollisionGroup;
+    l_HumanoidRootPart_0.CollisionGroup = l_Collision_0.CollisionGroup;
+    if l_Modifiers_0.isOn("PlayerSlowHealth") then
+        local v54 = (1 + l_Humanoid_0.Health / l_Humanoid_0.MaxHealth) / 2;
+        if l_Humanoid_0.MaxHealth <= 10 then
+            v54 = 0.8;
+        end;
+        v52 = v52 * v54;
+    end;
+    if l_Modifiers_0.isOn("PlayerSlow") then
+        v52 = v52 * 0.8;
+    end;
+    if v38 == true then
+        v52 = v52 * 0.7;
+    end;
+    if v2.char:GetAttribute("WaterSlowness") ~= nil then
+        v52 = v52 * ((100 - v2.char:GetAttribute("WaterSlowness")) / 100);
+    end;
+    l_Humanoid_0.WalkSpeed = v52 + tonumber(v53);
+    if v2.char:GetAttribute("CanJump") then
+        l_Humanoid_0.UseJumpPower = false;
+        l_Humanoid_0.JumpHeight = 5;
+        l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Jumping, true);
+        if not v42.Jump.Visible then
+            v42.Jump.BackgroundColor3 = Color3.fromRGB(255, 222, 189);
+            l_TweenService_0:Create(v42.Jump, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            }):Play();
+            v42.Jump.Visible = true;
+            return;
+        end;
+    else
+        l_Humanoid_0.UseJumpPower = false;
+        l_Humanoid_0.JumpHeight = 0;
+        l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Jumping, false);
+        v42.Jump.Visible = false;
+    end;
+end;
+v2.char:GetAttributeChangedSignal("SpeedBoost"):Connect(updatespeed);
+v2.char:GetAttributeChangedSignal("SpeedBoostExtra"):Connect(updatespeed);
+v2.char:GetAttributeChangedSignal("SpeedBoostBehind"):Connect(updatespeed);
+v2.char:GetAttributeChangedSignal("WaterSlowness"):Connect(updatespeed);
+v2.char:GetAttributeChangedSignal("CanJump"):Connect(updatespeed);
+v2.crouch = function(v55)
+    if v2.basecontrols then
+        v2.crouching = v55 or not v2.crouching;
+        return;
+    elseif v46 then
+        v42.Crouch.Visible = false;
+        v2.crouching = false;
+        return;
+    else
+        local v56 = true;
+		if v2.crouching == true and v55 == nil then
+            v56 = #workspace:GetPartsInPart(l_Collision_0, v45) <= 0;
+		end;
+		print(v56)
+        local v57, v58 = l_GetPlatform_0();
+        v43 = v57;
+        v44 = v58;
+        if not (not (v56 == true and v2.camlock == nil) or v2.stopcam ~= false) or v55 ~= nil then
+            if v55 ~= nil then
+                v2.crouching = v55;
+            else
+                v2.crouching = not v2.crouching;
+            end;
+            game.ReplicatedStorage.EntityInfo.Crouch:FireServer(v2.crouching);
+            if v2.crouching == true then
+                v47.Crouch:Play(0.2, 1, 0);
+                v2.spring:Impulse((Vector3.new(math.random(-2, 2), -10, math.random(-2, 2))));
+                updatespeed();
+                v42.Crouch.ImageTransparency = 0;
+                v42.Crouch.Image = "rbxassetid://8571432274";
+                if v44 ~= "mobile" then
+                    l_script_FirstAncestor_0.MainFrame.CrouchImage.Visible = false;
+                    l_TweenService_0:Create(l_script_FirstAncestor_0.MainFrame.CrouchImage, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+                        BackgroundTransparency = 1, 
+                        ImageTransparency = 0.6
+                    }):Play();
+                    l_script_FirstAncestor_0.MainFrame.CrouchImage.Image = "rbxassetid://8571378399";
+                    return;
+                else
+                    v42.Crouch.BackgroundTransparency = 0.35;
+                    v42.Crouch.ImageTransparency = 0;
+                    return;
+                end;
+            else
+                v47.Crouch:Stop(0.2);
+                v2.spring:Impulse((Vector3.new(math.random(-2, 2), 5, math.random(-2, 2))));
+                updatespeed();
+                v42.Crouch.ImageTransparency = 0;
+                v42.Crouch.Image = "rbxassetid://8571378399";
+                if v44 ~= "mobile" then
+                    l_script_FirstAncestor_0.MainFrame.CrouchImage.ImageTransparency = math.max(l_script_FirstAncestor_0.MainFrame.CrouchImage.ImageTransparency, 0.6);
+                    l_TweenService_0:Create(l_script_FirstAncestor_0.MainFrame.CrouchImage, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                        BackgroundTransparency = 1, 
+                        ImageTransparency = 1
+                    }):Play();
+                    l_script_FirstAncestor_0.MainFrame.CrouchImage.Image = "rbxassetid://8571432274";
+                    return;
+                else
+                    v42.Crouch.BackgroundTransparency = 0.35;
+                    v42.Crouch.ImageTransparency = 0;
+                end;
+            end;
+        end;
+        return;
+    end;
+end;
+updatespeed();
+l_UserInputService_0.InputBegan:connect(function(v59, v60)
+    if v59.UserInputType == Enum.UserInputType.MouseButton2 then
+        v2.hrc = true;
+    end;
+    if not (v60 ~= true and (not v2.stopcam or v2.basecontrols)) or v2.unlockmouse then
+        return;
+    else
+        if not (v59.KeyCode ~= Enum.KeyCode.C and v59.KeyCode ~= Enum.KeyCode.ButtonB and v59.KeyCode ~= Enum.KeyCode.ButtonR3 and v59.KeyCode ~= Enum.KeyCode.ButtonL3 and v59.KeyCode ~= Enum.KeyCode.LeftControl) or v59.KeyCode == Enum.KeyCode.LeftShift then
+            if l_ReplicaDataModule_0 and l_ReplicaDataModule_0.data and l_ReplicaDataModule_0.data.Settings.ToggleCrouch ~= true then
+                if v2.crouching == false then
+                    v2.crouch();
+                    return;
+                end;
+            elseif v2.crouching == false then
+                v2.crouch();
+                return;
+            else
+                for _ = 1, 5 do
+                    if v2.crouching == true then
+                        v2.crouch();
+                        task.wait(0.1);
+                    else
+                        break;
+                    end;
+                end;
+            end;
+        end;
+        return;
+    end;
+end);
+l_UserInputService_0.InputEnded:connect(function(v62, v63)
+    if v62.KeyCode == Enum.KeyCode.Space then
+        v2.holdjump = false;
+    end;
+    if v62.UserInputType == Enum.UserInputType.MouseButton2 then
+        v2.hrc = false;
+    end;
+    if v63 == true then
+        return;
+    else
+        if (not (v62.KeyCode ~= Enum.KeyCode.C and v62.KeyCode ~= Enum.KeyCode.ButtonB and v62.KeyCode ~= Enum.KeyCode.ButtonR3 and v62.KeyCode ~= Enum.KeyCode.ButtonL3 and v62.KeyCode ~= Enum.KeyCode.LeftControl) or v62.KeyCode == Enum.KeyCode.LeftShift) and l_ReplicaDataModule_0 and l_ReplicaDataModule_0.data and l_ReplicaDataModule_0.data.Settings.ToggleCrouch ~= true then
+            for _ = 1, 5000 do
+                if v2.crouching == true then
+                    v2.crouch();
+                    task.wait(0.1);
+                else
+                    break;
+                end;
+            end;
+        end;
+        return;
+    end;
+end);
+v2.char:GetAttributeChangedSignal("Stunned"):Connect(function(_)
+    local l_v2_0 = v2;
+    local v67 = true;
+    if l_Humanoid_0.Health >= 0.1 then
+        v67 = v2.char:GetAttribute("Stunned");
+    end;
+    l_v2_0.stunned = v67;
+    l_v2_0 = v2.stunned;
+    if not l_v2_0 then
+        v2.tweenCamFromSpot(0.4);
+    end;
+    l_Humanoid_0:ChangeState(l_v2_0 and Enum.HumanoidStateType.Physics or Enum.HumanoidStateType.GettingUp);
+    if l_v2_0 then
+        for _, v69 in pairs(l_Humanoid_0.Animator:GetPlayingAnimationTracks()) do
+            v69:Stop(0);
+        end;
+        return;
+    else
+        v47.Idle:Play(0.2, 1, 0.75);
+        v2.animations.Forward:Play(0.2, 0.01, 0.75);
+        return;
+    end;
+end);
+v42.Crouch.MouseButton1Down:Connect(function()
+    v2.crouch();
+end);
+v42.Jump.MouseButton1Down:Connect(function()
+    if v2.char:GetAttribute("CanJump") then
+        v2.hum.Jump = true;
+        return;
+    else
+        v42.Jump.Visible = false;
+        return;
+    end;
+end);
+l_Humanoid_0.StateChanged:Connect(function(_, v71)
+    if v71 == Enum.HumanoidStateType.Landed then
+        v2.spring:Impulse((Vector3.new(math.random(-2, 2), -25, math.random(-2, 2))));
+        v47.Jump:Stop(0.05);
+        v47.Land:Play(0.05, 0.66, 1);
+        local l_JumpVel_0 = v2.char.PrimaryPart:FindFirstChild("JumpVel");
+        if v2.hum.FloorMaterial == Enum.Material.Neon then
+            print("landed in neon");
+            task.spawn(function()
+                local v73 = tick() + 0.5;
+                while true do
+                    task.wait();
+                    l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Jumping, false);
+                    if not (v73 >= tick()) then
+                        break;
+                    end;
+                end;
+                l_Humanoid_0:SetStateEnabled(Enum.HumanoidStateType.Jumping, true);
+            end);
+        end;
+        if l_JumpVel_0 then
+            l_JumpVel_0:Destroy();
+            local l_Velocity_0 = v2.char.PrimaryPart.Velocity;
+            if l_Velocity_0.Magnitude > 6 and v2.chase then
+                local l_BodyVelocity_0 = Instance.new("BodyVelocity");
+                l_BodyVelocity_0.Name = "LandVel";
+                l_BodyVelocity_0.MaxForce = Vector3.new(9999, 0, 9999, 0);
+                l_BodyVelocity_0.Velocity = l_Velocity_0 * 0.4;
+                l_BodyVelocity_0.Parent = v2.char.PrimaryPart;
+                l_TweenService_0:Create(l_BodyVelocity_0, TweenInfo.new(0.5), {
+                    MaxForce = Vector3.new(0, 0, 0, 0)
+                }):Play();
+                task.delay(0.5, function()
+                    l_BodyVelocity_0:Destroy();
+                end);
+                local l_BoolValue_0 = Instance.new("BoolValue");
+                l_BoolValue_0.Name = "JumpVelDelay";
+                l_BoolValue_0.Parent = v2.char;
+                task.delay(1, function()
+                    l_BoolValue_0:Destroy();
+                end);
+            end;
+        end;
+    end;
+    if v71 == Enum.HumanoidStateType.Jumping then
+        v2.crouch(false);
+        v2.spring:Impulse((Vector3.new(math.random(-2, 2), 50, math.random(-2, 2))));
+        v47.Jump:Play(0.1, 1, 1);
+        local l_Velocity_1 = v2.char.PrimaryPart.Velocity;
+        if not (not (l_Velocity_1.Magnitude > 10) or not v2.chase) or v2.char:GetAttribute("SeekSlow") then
+            local l_BodyVelocity_1 = Instance.new("BodyVelocity");
+            l_BodyVelocity_1.Name = "JumpVel";
+            l_BodyVelocity_1.MaxForce = Vector3.new(1999, 0, 1999, 0);
+            l_BodyVelocity_1.Velocity = l_Velocity_1 * 1.2;
+            if v2.char:FindFirstChild("JumpVelDelay") then
+                l_BodyVelocity_1.Velocity = l_Velocity_1 * 0.8;
+            end;
+            if v2.char:GetAttribute("SeekSlow") then
+                l_BodyVelocity_1.Velocity = l_Velocity_1 * 0.75;
+            end;
+            l_BodyVelocity_1.Parent = v2.char.PrimaryPart;
+            l_TweenService_0:Create(l_BodyVelocity_1, TweenInfo.new(1), {
+                MaxForce = Vector3.new(0, 0, 0, 0)
+            }):Play();
+            task.delay(1, function()
+                l_BodyVelocity_1:Destroy();
+            end);
+        end;
+    end;
+end);
+local l_v30_0 = v30;
+local v80 = 0;
+local l_MotorReplication_0 = game:GetService("ReplicatedStorage").EntityInfo.MotorReplication;
+v7:BindToRenderStep("movement", 101, function(v82)
+    if v2.disableMovement then
+        return;
+    else
+        local l_MoveDirection_0 = l_Humanoid_0.MoveDirection;
+        v39 = l_Controls_0:GetMoveVector();
+        if v2.chase and v2.stopcam == false and v2.chaseMove == true then
+            local l_unit_0 = (l_Humanoid_0.MoveDirection + (v2.cam.CFrame.LookVector * Vector3.new(1, 0, 1, 0)).unit * 1.1).unit;
+            l_Humanoid_0:Move(l_unit_0, false);
+            l_MoveDirection_0 = l_unit_0;
+        end;
+        local _ = v40;
+        if l_MoveDirection_0.Magnitude > 0.1 then
+            if v40 == false then
+                v2.animations.Forward.TimePosition = math.random(1, 2) == 2 and 0.15 or 0.55;
+                if v2.animations.Crouch.IsPlaying then
+                    v2.animations.Crouch.TimePosition = v2.animations.Forward.TimePosition;
+                end;
+            end;
+            v28 = l_MoveDirection_0;
+            v40 = true;
+            if v2.chase and v39.Magnitude > 0.5 then
+                v2.chaseMove = false;
+            end;
+        else
+            if v40 == true then
+
+            end;
+            v40 = false;
+        end;
+        local v86 = l_MoveDirection_0.Magnitude * l_Humanoid_0.WalkSpeed;
+        local l_Magnitude_0 = Vector3.new(math.clamp(l_HumanoidRootPart_0.Velocity.X, -v86, v86), 0, (math.clamp(l_HumanoidRootPart_0.Velocity.Z, -v86, v86))).Magnitude;
+        if tick() <= v37 + 0.5 then
+            l_Magnitude_0 = 0;
+        end;
+        local v88 = math.clamp(l_Magnitude_0, 0.02, 30) / 15;
+        v2.animations.Forward:AdjustSpeed(v88);
+        if v2.crouching == true then
+            v2.animations.Forward:AdjustWeight(0.02);
+            v2.animations.Crouch:AdjustSpeed(v88);
+        else
+            v2.animations.Forward:AdjustWeight((math.clamp(l_Magnitude_0 / 15, 0.02, 1)));
+        end;
+        if v39.Z > 0.1 then
+            v39 = Vector3.new(v39.X * -1, v39.Y, v39.Z);
+            if v38 == false then
+                v38 = true;
+                updatespeed();
+            end;
+        elseif v38 == true then
+            v38 = false;
+            updatespeed();
+        end;
+        local v89 = 0;
+        local v90 = 0;
+        if v2.aiming == true then
+            v89 = -30;
+            v90 = 0;
+        end;
+        if v2.crouching == true then
+            v90 = 30;
+        end;
+        v30 = v30 + (v39 - v30) * math.clamp(v82 * 10, 0.01, 1);
+        v80 = v80 + (v90 - v80) * math.clamp(v82 * 5, 0.01, 1);
+        local v91 = Vector3.new(0, 0, 0, 0);
+        pcall(function()
+            v91 = v2.bobspring.p;
+        end);
+        if v2.camlock ~= nil then
+            v91 = Vector3.new(0, 0, 0, 0);
+        end;
+        if v2.hideplayers < 0 then
+            l_Root_0.C0 = l_C0_1;
+            l_Waist_0.C0 = l_C0_0;
+            l_Neck_0.C0 = l_C0_2;
+            l_LeftShoulder_0.C0 = l_C0_4;
+            l_RightShoulder_0.C0 = l_C0_3;
+        elseif v2.stunned == false and v2.stopcam ~= true then
+            l_Root_0.C0 = l_C0_1 * CFrame.Angles(0, math.rad(v30.x * -25), 0) * CFrame.Angles(math.rad(v91.Y * 3), math.rad(v91.X * 3), (math.rad(v91.X * 2)));
+            l_Waist_0.C0 = l_C0_0 * CFrame.Angles(math.rad(v2.ay * 0.25), 0, 0) * CFrame.Angles(0, math.rad(v30.x * 25), 0) * CFrame.Angles(0, 0, (math.rad(v2.az))) * CFrame.Angles(math.rad(v91.Y * -3), math.rad(v91.X * -3), (math.rad(v91.X * -2)));
+            l_Neck_0.C0 = l_C0_2 * CFrame.Angles(math.rad(v2.ay * 0.1), 0, 0);
+            if v2.tool then
+                l_LeftShoulder_0.C0 = l_C0_4 * CFrame.new(0, 1, -0.75) * CFrame.Angles(math.rad(v2.ay * 0.75 + v80), 0, 0) * CFrame.new(0, -1 + v80 / 60, 0.5) * CFrame.new(v2.tooloffset.X, v2.tooloffset.Y, v2.tooloffset.Z);
+                l_RightShoulder_0.C0 = l_C0_3 * CFrame.new(0, 1, -0.75) * CFrame.Angles(math.rad(v2.ay * 0.75 + v80), 0, 0) * CFrame.new(0, -1 + v80 / 60, 0.5) * CFrame.new(v2.tooloffset.X, v2.tooloffset.Y, v2.tooloffset.Z);
+            else
+                l_LeftShoulder_0.C0 = l_C0_4 * CFrame.new(0, -0.3 - v2.ay / 270, (math.clamp(-v2.ay / 90, -0.4, 0))) * CFrame.Angles(math.rad(v2.ay * -0.025 + v80), 0, 0);
+                l_RightShoulder_0.C0 = l_C0_3 * CFrame.new(0, -0.3 - v2.ay / 270, (math.clamp(-v2.ay / 90, -0.4, 0))) * CFrame.Angles(math.rad(v2.ay * -0.025 + v80), 0, 0);
+            end;
+        else
+            l_Root_0.C0 = l_C0_1;
+            l_Waist_0.C0 = l_C0_0;
+            l_Neck_0.C0 = l_C0_2;
+            l_LeftShoulder_0.C0 = l_C0_4;
+            l_RightShoulder_0.C0 = l_C0_3;
+        end;
+        if v2.finalCamCFrame and not v2.stopcam then
+            if v2.stunned == false and v2.camlock == nil and not v2.freemouse then
+                l_HumanoidRootPart_0.CFrame = CFrame.new(l_HumanoidRootPart_0.Position, l_HumanoidRootPart_0.Position + v2.finalCamCFrame.LookVector * Vector3.new(1, 0, 1, 0));
+            end;
+            if v2.skybox then
+                v2.skybox.CFrame = CFrame.new(v2.cam.CFrame.Position) * CFrame.new(0, 5, 0);
+            end;
+        end;
+        if not (not (tick() > v31 + 0.03333333333333333 and not v2.dead) or (v30 - l_v30_0).Magnitude <= 0.05 and math.abs(l_ax_0 - v2.ax) <= 0.1) or not (l_az_t_0 == v2.az_t) or v2.aiming ~= v36 then
+			l_MotorReplication_0:FireServer(math.ceil(v30.X * 10), math.ceil(v2.ay + 0), v2.az_t, v2.crouching);
+            v31 = tick();
+            l_ax_0 = v2.ax;
+            l_v30_0 = v30;
+        end;
+        v35 = v2.crouching;
+        v36 = v2.aiming;
+        l_az_t_0 = v2.az_t;
+        return;
+    end;
+end);
